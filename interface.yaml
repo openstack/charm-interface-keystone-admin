@@ -1,0 +1,3 @@
+name: keystone-admin
+summary: Interface for integrating with Keystone identity service
+maintainer: Alvaro Uria <alvaro.uria@canonical.com>
