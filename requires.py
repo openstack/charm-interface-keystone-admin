@@ -22,36 +22,33 @@ class KeystoneRequires(RelationBase):
     # These remote data fields will be automatically mapped to accessors
     # with a basic documentation string provided.
 
-    auto_accessors = ['private-address', 'service_host', 'service_protocol',
-                      'service_port', 'service_tenant', 'service_username',
-                      'service_password', 'service_tenant_id', 'auth_host',
-                      'auth_protocol', 'auth_port', 'admin_token', 'ssl_key',
-                      'ca_cert', 'ssl_cert', 'https_keystone',
-                      'ssl_cert_admin', 'ssl_cert_internal',
-                      'ssl_cert_public', 'ssl_key_admin', 'ssl_key_internal',
-                      'ssl_key_public']
+    auto_accessors = ['service_hostname', 'service_password',
+                      'service_port', 'service_region',
+                      'service_tenant_name', 'service_username']
 
     @hook('{requires:keystone}-relation-{joined,changed}')
     def changed(self):
         conv = self.conversation()
-        self.kst_data = self.auth_data_complete(conv)
+        self.kst_data = self.auth_data_complete()
         if self.kst_data:
             conv.set_state('{relation_name}.available')
         else:
             conv.remove_state('{relation_name}.available')
+            conv.set_state('{relation_name}.connected')
 
     @hook('{requires:keystone}-relation-{broken,departed}')
     def departed(self):
         conv = self.conversation()
         conv.remove_state('{relation_name}.available')
+        conv.remove_state('{relation_name}.connected')
 
     def auth_data_complete(self, conv):
         data = {
-            'service_hostname': conv.get_remote('service_hostname'),
-            'service_port': conv.get_remote('service_port'),
-            'service_username': conv.get_remote('service_username'),
-            'service_password': conv.get_remote('service_password'),
-            'service_tenant_name': conv.get_remote('service_tenant_name')
+            'service_hostname': self.service_hostname(),
+            'service_port': self.service_port(),
+            'service_username': self.service_username(),
+            'service_password': self.service_password(),
+            'service_tenant_name': self.service_tenant_name()
         }
         if all(data.values()):
             return data
