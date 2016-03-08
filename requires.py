@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -29,12 +28,11 @@ class KeystoneRequires(RelationBase):
     @hook('{requires:keystone}-relation-{joined,changed}')
     def changed(self):
         conv = self.conversation()
-        self.kst_data = self.auth_data_complete()
-        if self.kst_data:
+        conv.set_state('{relation_name}.connected')
+        if self.auth_data_complete()
             conv.set_state('{relation_name}.available')
         else:
             conv.remove_state('{relation_name}.available')
-            conv.set_state('{relation_name}.connected')
 
     @hook('{requires:keystone}-relation-{broken,departed}')
     def departed(self):
@@ -42,20 +40,20 @@ class KeystoneRequires(RelationBase):
         conv.remove_state('{relation_name}.available')
         conv.remove_state('{relation_name}.connected')
 
-    def auth_data_complete(self, conv):
-        data = {
+    def credentials(self):
+        """
+        Returns a dict of keystone admin credentials
+        """
+        return {
             'service_hostname': self.service_hostname(),
             'service_port': self.service_port(),
             'service_username': self.service_username(),
             'service_password': self.service_password(),
             'service_tenant_name': self.service_tenant_name()
         }
-        if all(data.values()):
-            return data
-        return False
 
-    def credentials(self):
-        """
-        Returns a dict of keystone admin credentials
-        """
-        return self.kst_data
+    def auth_data_complete(self):
+        data = self.credentials()
+        if all(data.values()):
+            return True
+        return False
