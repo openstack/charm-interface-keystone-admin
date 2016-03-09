@@ -25,7 +25,7 @@ class KeystoneRequires(RelationBase):
                       'service_port', 'service_region',
                       'service_tenant_name', 'service_username']
 
-    @hook('{requires:keystone}-relation-{joined,changed}')
+    @hook('{requires:keystone-admin}-relation-{joined,changed}')
     def changed(self):
         conv = self.conversation()
         conv.set_state('{relation_name}.connected')
@@ -34,7 +34,7 @@ class KeystoneRequires(RelationBase):
         else:
             conv.remove_state('{relation_name}.available')
 
-    @hook('{requires:keystone}-relation-{broken,departed}')
+    @hook('{requires:keystone-admin}-relation-{broken,departed}')
     def departed(self):
         conv = self.conversation()
         conv.remove_state('{relation_name}.available')
