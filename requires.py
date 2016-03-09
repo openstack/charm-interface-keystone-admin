@@ -44,14 +44,18 @@ class KeystoneRequires(RelationBase):
         """
         Returns a dict of keystone admin credentials
         """
-        conv = self.conversation()
-        return {
-            'service_hostname': conv.get_remote('service_hostname'),
-            'service_port': conv.get_remote('service_port'),
-            'service_username': conv.get_remote('service_username'),
-            'service_password': conv.get_remote('service_password'),
-            'service_tenant_name': conv.get_remote('service_tenant_name')
-        }
+        convs = self.conversations()
+        if len(convs) > 0:
+            conv = convs[0]
+            return {
+                'service_hostname': conv.get_remote('service_hostname'),
+                'service_port': conv.get_remote('service_port'),
+                'service_username': conv.get_remote('service_username'),
+                'service_password': conv.get_remote('service_password'),
+                'service_tenant_name': conv.get_remote('service_tenant_name')
+            }
+        else:
+            return {}
 
     def auth_data_complete(self):
         data = self.credentials()
