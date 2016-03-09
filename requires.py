@@ -43,6 +43,15 @@ class KeystoneRequires(RelationBase):
     def credentials(self):
         """
         Returns a dict of keystone admin credentials
+
+        keystone provides:
+            {u'service_password': u'XXXXXXXX',
+             u'service_port': u'5000',
+             u'private-address': u'10.XX.XX.XXX',
+             u'service_hostname': u'10.XX.XX.XXX',
+             u'service_username': u'admin',
+             u'service_tenant_name': u'Admin',
+             u'service_region': u'RegionOne'}
         """
         convs = self.conversations()
         if len(convs) > 0:
@@ -52,7 +61,8 @@ class KeystoneRequires(RelationBase):
                 'service_port': conv.get_remote('service_port'),
                 'service_username': conv.get_remote('service_username'),
                 'service_password': conv.get_remote('service_password'),
-                'service_tenant_name': conv.get_remote('service_tenant_name')
+                'service_tenant_name': conv.get_remote('service_tenant_name'),
+                'service_region': conv.get_remote('service_region')
             }
         else:
             return {}
