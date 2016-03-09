@@ -16,7 +16,7 @@ from charms.reactive import scopes
 
 
 class KeystoneRequires(RelationBase):
-    scope = scopes.GLOBAL
+    scope = scopes.UNIT
 
     # These remote data fields will be automatically mapped to accessors
     # with a basic documentation string provided.
@@ -29,7 +29,7 @@ class KeystoneRequires(RelationBase):
     def changed(self):
         conv = self.conversation()
         conv.set_state('{relation_name}.connected')
-        if self.auth_data_complete()
+        if self.auth_data_complete():
             conv.set_state('{relation_name}.available')
         else:
             conv.remove_state('{relation_name}.available')
@@ -44,12 +44,13 @@ class KeystoneRequires(RelationBase):
         """
         Returns a dict of keystone admin credentials
         """
+        conv = self.conversation()
         return {
-            'service_hostname': self.service_hostname(),
-            'service_port': self.service_port(),
-            'service_username': self.service_username(),
-            'service_password': self.service_password(),
-            'service_tenant_name': self.service_tenant_name()
+            'service_hostname': conv.get_remote('service_hostname'),
+            'service_port': conv.get_remote('service_port'),
+            'service_username': conv.get_remote('service_username'),
+            'service_password': conv.get_remote('service_password'),
+            'service_tenant_name': conv.get_remote('service_tenant_name')
         }
 
     def auth_data_complete(self):
