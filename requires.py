@@ -18,13 +18,6 @@ from charms.reactive import scopes
 class KeystoneRequires(RelationBase):
     scope = scopes.UNIT
 
-    # These remote data fields will be automatically mapped to accessors
-    # with a basic documentation string provided.
-
-    auto_accessors = ['service_hostname', 'service_password',
-                      'service_port', 'service_region',
-                      'service_tenant_name', 'service_username']
-
     @hook('{requires:keystone-admin}-relation-{joined,changed}')
     def changed(self):
         conv = self.conversation()
