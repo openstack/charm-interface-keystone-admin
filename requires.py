@@ -45,18 +45,37 @@ class KeystoneRequires(RelationBase):
              u'service_username': u'admin',
              u'service_tenant_name': u'Admin',
              u'service_region': u'RegionOne'}
+       keystone v3 also provides
+            {api_version: "3"
+            service_project_domain_name: admin_domain
+            service_project_name: admin
+            service_protocol: http
+            service_region: RegionOne
+            service_user_domain_name: admin_domain}
         """
         convs = self.conversations()
         if len(convs) > 0:
             conv = convs[0]
-            return {
+            id_admin_data = {
                 'service_hostname': conv.get_remote('service_hostname'),
                 'service_port': conv.get_remote('service_port'),
                 'service_username': conv.get_remote('service_username'),
                 'service_password': conv.get_remote('service_password'),
                 'service_tenant_name': conv.get_remote('service_tenant_name'),
-                'service_region': conv.get_remote('service_region')
+                'service_region': conv.get_remote('service_region'),
             }
+            if conv.get_remote('api_version', u'2') > u'2':
+                id_admin_data['api_version'] = (
+                    conv.get_remote('api_version', u'2'))
+                id_admin_data['service_user_domain_name'] = (
+                    conv.get_remote('service_user_domain_name'))
+                id_admin_data['service_project_domain_name'] = (
+                    conv.get_remote('service_project_domain_name'))
+                id_admin_data['service_project_name'] = (
+                    conv.get_remote('service_project_name'))
+                id_admin_data['service_protocol'] = (
+                    conv.get_remote('service_protocol'))
+            return id_admin_data
         else:
             return {}
 
